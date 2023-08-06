@@ -1,0 +1,66 @@
+In SQL, a trigger is a database object that is associated with a table and automatically executes when a specific event 
+(such as an insert, update, or delete operation) occurs on that table. 
+Triggers are used to enforce data integrity, implement business rules, or automate certain actions in response to data changes.
+
+Here's an example of creating triggers for various cases in SQL:
+
+Suppose we have a table named "employees" with the following structure:
+
+```sql
+CREATE TABLE employees (
+  id INT PRIMARY KEY,
+  name VARCHAR(50),
+  age INT,
+  department VARCHAR(50),
+  salary DECIMAL(10, 2)
+);
+```
+
+Case 1: Creating an "AFTER INSERT" trigger to automatically update a related table.
+
+```sql
+CREATE TRIGGER after_insert_employee
+AFTER INSERT ON employees
+FOR EACH ROW
+BEGIN
+  INSERT INTO audit_log (action, table_name, affected_row_id, action_timestamp)
+  VALUES ('INSERT', 'employees', NEW.id, NOW());
+END;
+```
+
+In this case, we're creating an "AFTER INSERT" trigger that will insert a new record into the "audit_log" table 
+every time a new row is inserted into the "employees" table.
+
+Case 2: Creating a "BEFORE UPDATE" trigger to enforce a salary range constraint.
+
+```sql
+CREATE TRIGGER before_update_salary
+BEFORE UPDATE ON employees
+FOR EACH ROW
+BEGIN
+  IF NEW.salary < 1000 THEN
+    SET NEW.salary = 1000;
+  END IF;
+END;
+```
+
+Here, we're creating a "BEFORE UPDATE" trigger that will ensure the "salary" value is never set below 1000 
+henever an update operation is performed on the "employees" table.
+
+Case 3: Creating an "AFTER DELETE" trigger to log deleted records.
+
+```sql
+CREATE TRIGGER after_delete_employee
+AFTER DELETE ON employees
+FOR EACH ROW
+BEGIN
+  INSERT INTO deleted_employees (id, name, age, department, salary, deleted_timestamp)
+  VALUES (OLD.id, OLD.name, OLD.age, OLD.department, OLD.salary, NOW());
+END;
+```
+
+This trigger will log deleted records from the "employees" table into the "deleted_employees" table.
+
+Please note that these are just example triggers, and in a real-world scenario, 
+you would need to adapt them to your specific use cases and database structure. 
+Also, keep in mind that the exact syntax for triggers may vary slightly depending on the SQL database system you are using (e.g., MySQL, PostgreSQL, SQL Server, etc.).
