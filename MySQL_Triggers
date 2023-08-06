@@ -1,0 +1,81 @@
+In MySQL, a trigger is a named database object that is associated with a table and 
+automatically fires when a specific event (such as INSERT, UPDATE, DELETE) occurs on that table. 
+Triggers are used to perform actions, such as modifying data or logging events, based on the changes made to the table.
+
+Let's go through some common cases and examples of creating triggers in MySQL:
+
+1. Trigger on INSERT:
+
+Suppose we have a table named "employees" with the following structure:
+
+```sql
+CREATE TABLE employees (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50),
+  age INT,
+  salary DECIMAL(10, 2)
+);
+```
+
+We want to create a trigger that logs the inserted data into a separate "employees_log" table whenever a new record is inserted into the "employees" table.
+
+```sql
+CREATE TABLE employees_log (
+  log_id INT AUTO_INCREMENT PRIMARY KEY,
+  action VARCHAR(10),
+  employee_id INT,
+  log_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER //
+
+CREATE TRIGGER after_employee_insert
+AFTER INSERT ON employees
+FOR EACH ROW
+BEGIN
+  INSERT INTO employees_log (action, employee_id) VALUES ('INSERT', NEW.id);
+END;
+//
+
+DELIMITER ;
+```
+
+2. Trigger on UPDATE:
+
+Let's create another trigger that logs the updated data into the "employees_log" table whenever an existing record is updated in the "employees" table.
+
+```sql
+DELIMITER //
+
+CREATE TRIGGER after_employee_update
+AFTER UPDATE ON employees
+FOR EACH ROW
+BEGIN
+  INSERT INTO employees_log (action, employee_id) VALUES ('UPDATE', NEW.id);
+END;
+//
+
+DELIMITER ;
+```
+
+3. Trigger on DELETE:
+
+Lastly, we can create a trigger that logs the deleted data into the "employees_log" table whenever a record is deleted from the "employees" table.
+
+```sql
+DELIMITER //
+
+CREATE TRIGGER after_employee_delete
+AFTER DELETE ON employees
+FOR EACH ROW
+BEGIN
+  INSERT INTO employees_log (action, employee_id) VALUES ('DELETE', OLD.id);
+END;
+//
+
+DELIMITER ;
+```
+
+In these examples, we have defined triggers for the "AFTER INSERT," "AFTER UPDATE," and "AFTER DELETE" events on the "employees" table. The triggers perform specific actions when these events occur, which includes logging the corresponding action and the affected employee ID into the "employees_log" table.
+
+Please note that these are simple examples to illustrate the concept of triggers. In practice, you can have more complex triggers to handle various scenarios and actions based on your specific requirements.
