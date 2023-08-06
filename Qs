@@ -1,0 +1,17 @@
+Q1. Write a query to list the duplicate values
+SELECT Name, COUNT(*) AS Count
+FROM employees
+GROUP BY Name
+HAVING COUNT(*) > 1;
+
+Q2. Write a query to find out the student with the 2nd rank from the table STUDENTS_DETAILS.
+SELECT
+  student_name,
+  marks
+FROM
+  STUDENTS_DETAILS
+ORDER BY
+  marks DESC
+LIMIT
+  1, 1;
+
